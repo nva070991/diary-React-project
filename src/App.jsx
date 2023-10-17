@@ -14,28 +14,29 @@ import {useState} from 'react'
 
 function App() {
 	const INITIAL_DATA = [
-		{
-			id: 1,
-			title: 'Подготовка к обновлению курсов',
-			post: 'Горные походы открывают удивительные природные ландшафт',
-			date: new Date()
-		},
-		{
-			id: 2,
-			title: 'Поход в горы',
-			post: 'Я ходил в горы',
-			date: new Date()
-		}
+		// {
+		// 	id: 1,
+		// 	title: 'Подготовка к обновлению курсов',
+		// 	post: 'Горные походы открывают удивительные природные ландшафт',
+		// 	date: new Date()
+		// },
+		// {
+		// 	id: 2,
+		// 	title: 'Поход в горы',
+		// 	post: 'Я ходил в горы',
+		// 	date: new Date()
+		// }
 	]
 
 	const [items, setItem] = useState(INITIAL_DATA)
+	console.log(items)
 
 	const addItem = (item) =>{
 		setItem(oldItem => [...oldItem, {
-			id: Math.max(...oldItem.map(i => i.d))+1,
+			id: oldItem.length > 0 ? Math.max(...oldItem.map(i => i.id))+1 : 1,
 			title: item.title,
 			post: item.post,
-			date: new Date(item.date)
+			date: item.date==='' ? new Date() : new Date(item.date)
 		}])
 	}
 
@@ -54,7 +55,8 @@ function App() {
 				<Header/>
 				<JournalAddButton/>
 				<JournalList>
-					{items.sort(sortItems).map(el => (
+					{items.length === 0 && <p>Записей нет</p>}
+					{items.length>0 && items.sort(sortItems).map(el => (
 						<CardButton key={el.id}>
 							<JournalItem title={el.title} text={el.post} date={el.date}/>
 						</CardButton>

@@ -1,0 +1,10 @@
+.logo {
+  width: 80px;
+  color: white;
+}
+.boxLogo {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
