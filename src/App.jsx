@@ -7,35 +7,37 @@ import JournalList from './components/JournalList/JournalList';
 import Body from './layouts/Body/Body'
 import JournalAddButton from './components/JournalAddButton/JournalAddButton';
 import JournalForm from './components/JournalForm/JournalForm'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 
 
 
 
 function App() {
-	const INITIAL_DATA = [
-		// {
-		// 	id: 1,
-		// 	title: 'Подготовка к обновлению курсов',
-		// 	post: 'Горные походы открывают удивительные природные ландшафт',
-		// 	date: new Date()
-		// },
-		// {
-		// 	id: 2,
-		// 	title: 'Поход в горы',
-		// 	post: 'Я ходил в горы',
-		// 	date: new Date()
-		// }
-	]
+	const [items, setItem] = useState([])
 
-	const [items, setItem] = useState(INITIAL_DATA)
-	console.log(items)
+	useEffect(()=>{
+		const data = JSON.parse(localStorage.getItem('data'))
+		if (data) {
+			setItem(data.map(item => ({
+				...item,
+				date: new Date(item.date)
+			})))
+		}
+
+	},[])
+
+	useEffect(()=>{
+		if (items.length) {
+			console.log('Воспоминание записано')
+			localStorage.setItem('data', JSON.stringify(items))
+		}
+	},[items])
 
 	const addItem = (item) =>{
 		setItem(oldItem => [...oldItem, {
 			id: oldItem.length > 0 ? Math.max(...oldItem.map(i => i.id))+1 : 1,
 			title: item.title,
-			post: item.post,
+			text: item.text,
 			date: item.date==='' ? new Date() : new Date(item.date)
 		}])
 	}
@@ -58,7 +60,7 @@ function App() {
 					{items.length === 0 && <p>Записей нет</p>}
 					{items.length>0 && items.sort(sortItems).map(el => (
 						<CardButton key={el.id}>
-							<JournalItem title={el.title} text={el.post} date={el.date}/>
+							<JournalItem title={el.title} text={el.text} date={el.date}/>
 						</CardButton>
 					))}
 				</JournalList>

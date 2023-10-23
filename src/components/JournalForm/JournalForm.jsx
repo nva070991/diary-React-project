@@ -1,62 +1,53 @@
 import Button from '../Button/Button'
-import { useState } from 'react'
+import { useEffect, useReducer } from 'react'
 import cn from 'classnames'
 import styles from './JournalForm.module.css'
+import { INITIAL_STATE, formReducer } from './JournalFormState'
 
 
 function JournalForm({addItem}) {
 
-	const [formValidState, setFormValidState] = useState({
-		title: true,
-		text: true,
-		date: true,
-		tag: true
-	})
+	const [formState, dispatchForm] = useReducer(formReducer, INITIAL_STATE)
+	const {isValid, isFormReadyToSubmit, values} = formState
+
+	useEffect(() => {
+		let timerId
+		if(!isValid.title || !isValid.text || !isValid.date || !isValid.tag) {
+			timerId= setTimeout(()=> {
+				dispatchForm({ type: 'RESET_VALIDITY'})
+			}, 2000)
+
+			return ()=>{
+				clearTimeout(timerId)
+			}
+		}
+	} , [isValid])
+
+	useEffect(()=>{
+		if(isFormReadyToSubmit) {
+			addItem(values)
+			dispatchForm({type: 'CLEAR'})
+		}
+
+	},[isFormReadyToSubmit])
 
 	const addJournalItem = (e) => {
-		e.preventDefault()
-		const formData = new FormData(e.target)
-		const formProps = Object.fromEntries(formData)
-		console.log(formProps)
-		let isFormValid = true
-		if(!formProps.title?.trim().length) {
-			setFormValidState(state => ({...state, title : false
-			}))
-			isFormValid = false
-		}
-		else {setFormValidState(state => ({...state, title : true
-		}))}
-		if(!formProps.text?.trim().length) {
-			setFormValidState(state => ({...state, text : false
-			}))
-			isFormValid = false
-		}
-		else {setFormValidState(state => ({...state, text : true
-		}))}
-		if(!formProps.date) {
-			setFormValidState(state => ({...state, date : false
-			}))
-			isFormValid = false
-		}
-		else {setFormValidState(state => ({...state, date : true
-		}))}
-		if(!formProps.tag?.trim().length) {
-			setFormValidState(state => ({...state, tag : false
-			}))
-			isFormValid = false
-		}
-		else {setFormValidState(state => ({...state, tag : true
-		}))}
-		if (!isFormValid) {console.log(isFormValid) 
-			return}
 
-		addItem(formProps)
+		e.preventDefault()
+		
+		dispatchForm({type: 'SUBMIT'})
+
+	}
+
+	const onChange =(e) => {
+		dispatchForm({type: 'SET_VALUE', payload: { [e.target.name] : e.target.value}})
+
 	}
 	return (
 		<>
 			<form className={styles['journal-form']} onSubmit={addJournalItem}>
 				<div>
-					<input className={cn(styles['journal-form-title'], {[styles.invalid] : !formValidState.title})} type='text' name='title'/>
+					<input value={values.title} onChange={onChange} className={cn(styles['journal-form-title'], {[styles.invalid] : !isValid.title})} type='text' name='title'/>
 
 				</div>
 
@@ -65,16 +56,16 @@ function JournalForm({addItem}) {
 						<img className={styles['journal-form-logo']} src="/calendar.svg" alt="Иконка календаря" />
 						<span>Дата</span>
 					</label>
-					<input id='date' className={cn(styles['journal-form-date'], {[styles.invalid] : !formValidState.date})} type='date' name='date'/>
+					<input id='date' value={values.date} onChange={onChange} className={cn(styles['journal-form-date'], {[styles.invalid] : !isValid.date})} type='date' name='date'/>
 				</div>
 				<div className={styles['journal-form-div']}>
 					<label className={styles['journal-form-label']} htmlFor="tag">
 						<img className={styles['journal-form-logo']} src="/folder.svg" alt="Иконка папки" />
 						<span>Метки</span>
 					</label>
-					<input className={cn(styles['journal-form-tag'], {[styles.invalid] : !formValidState.tag})} id='tag' type='text' name='tag'/>
+					<input value={values.tag} onChange={onChange} className={cn(styles['journal-form-tag'], {[styles.invalid] : !isValid.tag})} id='tag' type='text' name='tag'/>
 				</div>
-				<textarea className={cn(styles['journal-form-text'], {[styles.invalid] : !formValidState.text})} name="text" id="" cols="30" rows="10"></textarea>
+				<textarea value={values.text} onChange={onChange} className={cn(styles['journal-form-text'], {[styles.invalid] : !isValid.text})} name="text" id="" cols="30" rows="10"></textarea>
 				<Button text="Сохранить"/>
 			</form>
 		</>
