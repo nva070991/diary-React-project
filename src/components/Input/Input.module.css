@@ -1,0 +1,25 @@
+.journal-form-input {
+	border: none;
+	border-radius: 3px;
+	background: rgba(255, 255, 255, 0.03);
+	border-color: rgba(255, 255, 255, 0.4);
+	color: white;
+	font-size: 14px;
+	font-weight: 600;
+	font-family: "Source Sans 3", sans-serif;
+	border-bottom: 1px solid #535252;
+	width: 100%;
+  }
+
+.journal-form-title {
+	font-size: 32px;
+	margin-top: 60px;
+  }
+
+
+
+  .invalid {
+	border: 1px solid red;
+	background: rgb(113, 13, 13);
+  }
+
