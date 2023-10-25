@@ -3,11 +3,12 @@ Start - npm run dev
 
 Технологии:
 
-JavaScript; React;
+JavaScript; React; 
 
 Hooks: UseState, UseEffect, useReducer, useRef;
 
-Functional component; React Refs; 
+Functional component; React Refs; ClassNames;
+
 
 
 ![Alt text](image.png)
