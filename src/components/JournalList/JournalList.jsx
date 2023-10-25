@@ -2,7 +2,7 @@ import './JournalList.css'
 import CardButton from  '../CardButton/CardButton'
 import JournalItem from '../JournalItem/JournalItem'
 
-function JournalList({items}) {
+function JournalList({children, items, setItem}) {
 
 	const sortItems = (a,b) => {
 		if (a.date< b.date) {
@@ -12,11 +12,16 @@ function JournalList({items}) {
 
 	}
 
+
+
 	return (
 		<div className="journal-list">
+			{items.length === 0 && children}
+
 			{items.length>0 && items.sort(sortItems).map(el => (
-				<CardButton key={el.id}>
-					<JournalItem title={el.title} text={el.text} date={el.date}/>
+				<CardButton onClick={()=>{ 
+					setItem(el)}} key={el.id}>
+					<JournalItem title={el.title} text={el.text} date={el.date} tag={el.tag}/>
 				</CardButton>
 			))}
 		</div>

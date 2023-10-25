@@ -11,9 +11,13 @@
 	width: 100%;
   }
 
+  .journal-form-input::-webkit-calendar-picker-indicator {
+	filter: invert(1);
+	cursor: pointer;
+  }
+
 .journal-form-title {
 	font-size: 32px;
-	margin-top: 60px;
   }
 
 

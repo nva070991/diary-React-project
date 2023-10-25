@@ -6,7 +6,7 @@ import { INITIAL_STATE, formReducer } from './JournalFormState'
 import Input from '../Input/Input'
 
 
-function JournalForm({addItem}) {
+function JournalForm({addItem, data, onDelete}) {
 
 	const [formState, dispatchForm] = useReducer(formReducer, INITIAL_STATE)
 	const {isValid, isFormReadyToSubmit, values} = formState
@@ -32,6 +32,13 @@ function JournalForm({addItem}) {
 		}
 
 	}
+
+	useEffect(()=>{
+		if (!data) {
+			dispatchForm({type: 'CLEAR'})
+		}
+		dispatchForm({type: 'SET_VALUE', payload: { ...data}})
+	},[data])
 
 	useEffect(() => {
 		let timerId
@@ -64,11 +71,21 @@ function JournalForm({addItem}) {
 		dispatchForm({type: 'SET_VALUE', payload: { [e.target.name] : e.target.value}})
 
 	}
+
+	const onDeleteItem =() => {
+		onDelete(data.id)
+		dispatchForm({type: 'CLEAR'})
+
+	}
+
+
 	return (
 		<form className={styles['journal-form']} onSubmit={addJournalItem}>
-			<div>
+			<div className={styles['journal-form-div']}>
 				<Input value={values.title} appearance='title' isValid={isValid.title} ref={titleRef} onChange={onChange} className={cn(styles['journal-form-title'], {[styles.invalid] : !isValid.title})} type='text' name='title'/>
-
+				{data?.id && <button type='button' onClick={()=>onDeleteItem()} className={styles['journal-delete-button']}>
+					<img className={styles['journal-trash-can']} src="/trashCan.svg" alt="Trash Can icon" />Удалить
+				</button>}
 			</div>
 
 			<div className={styles['journal-form-div']}>
@@ -76,7 +93,7 @@ function JournalForm({addItem}) {
 					<img className={styles['journal-form-logo']} src="/calendar.svg" alt="Иконка календаря" />
 					<span>Дата</span>
 				</label>
-				<Input id='date' isValid={isValid.date} ref={dateRef} value={values.date} onChange={onChange} type='date' name='date'/>
+				<Input id='date' isValid={isValid.date} ref={dateRef} value={values.date ? new Date(values.date).toISOString().slice(0, 10) : ''} onChange={onChange} type='date' name='date'/>
 			</div>
 			<div className={styles['journal-form-div']}>
 				<label className={styles['journal-form-label']} htmlFor="tag">
