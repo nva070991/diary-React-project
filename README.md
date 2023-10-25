@@ -3,7 +3,7 @@ Start - npm run dev
 
 Технологии:
 
-JavaScript; React; 
+JavaScript; React; Vite;
 
 Hooks: UseState, UseEffect, useReducer, useRef;
 
